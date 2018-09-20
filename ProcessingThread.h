@@ -66,7 +66,7 @@ private:
     int inputSourceHeight;
     int currentSizeOfBuffer;
     Mat currentFrame;
-    //Mat currentFrameGrayscale;
+    Mat currentFrameGrayscale;
     Rect originalROI;
     Rect currentROI;
     QImage frame;
@@ -88,8 +88,6 @@ private:
 protected:
     void run();
 private slots:
-    void updateImageProcessingFlags(struct ImageProcessingFlags);
-    void updateImageProcessingSettings(struct ImageProcessingSettings);
     void updateTaskData(struct TaskData);
 signals:
     void newFrame(const QImage &frame);

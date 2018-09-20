@@ -83,7 +83,15 @@ bool CaptureThread::connectToCamera(int deviceNumber)
 {
     // Open camera and return result
     return cap.open(deviceNumber);
-} // connectToCamera()
+}
+
+bool CaptureThread::connectToCamera(QString videoStreamAddress)
+{
+	//videoCapture可以直接播放网络视频流
+	std::string videoStreamAddr = videoStreamAddress.toStdString();
+	return cap.open(videoStreamAddr);
+}
+
 
 void CaptureThread::disconnectCamera()
 {

@@ -45,6 +45,7 @@ public:
 	DeviceType getDeviceType();
     void setImageBufferSize();
     int getDeviceNumber();
+	QString getVideoStreamAddress();
     int getImageBufferSize();
     bool getDropFrameCheckBoxState();
     int getCaptureThreadPrio();

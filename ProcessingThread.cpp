@@ -97,19 +97,12 @@ void ProcessingThread::run()
             resetROI();
         else if(setROIFlag)
             setROI();
-        ////////////////////////////////////
-        // PERFORM IMAGE PROCESSING BELOW //
-        ////////////////////////////////////
        
-
-
-        ////////////////////////////////////
-        // PERFORM IMAGE PROCESSING ABOVE //
-        ////////////////////////////////////
-
-        // Convert Mat to QImage: Show grayscale frame [if Grayscale mode is ON]
-
-         frame=MatToQImage(currentFrame);
+		//�Ҷȱ任
+		//cvtColor(currentFrame, currentFrameGrayscale, CV_BGR2GRAY);
+		//frame = MatToQImage(currentFrameGrayscale);
+         
+		frame=MatToQImage(currentFrame);
         updateMembersMutex.unlock();
 
         // Update statistics
@@ -176,15 +169,7 @@ void ProcessingThread::resetROI()
     resetROIFlag=false;
 } // resetROI()
 
-void ProcessingThread::updateImageProcessingFlags(struct ImageProcessingFlags imageProcessingFlags)
-{
-    
-} // updateImageProcessingFlags()
 
-void ProcessingThread::updateImageProcessingSettings(struct ImageProcessingSettings imageProcessingSettings)
-{
-   
-} // updateImageProcessingSettings()
 
 void ProcessingThread::updateTaskData(struct TaskData taskData)
 {
@@ -195,7 +180,7 @@ void ProcessingThread::updateTaskData(struct TaskData taskData)
     this->selectionBox.y=taskData.selectionBox.top();
     this->selectionBox.width=taskData.selectionBox.width();
     this->selectionBox.height=taskData.selectionBox.height();
-} // updateTaskData()
+}
 
 int ProcessingThread::getAvgFPS()
 {

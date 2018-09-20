@@ -50,6 +50,7 @@ class CaptureThread : public QThread
 public:
     CaptureThread(ImageBuffer *buffer);
     bool connectToCamera(int);
+	bool connectToCamera(QString);
     void disconnectCamera();
     void stopCaptureThread();
     int getAvgFPS();

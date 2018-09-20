@@ -66,14 +66,11 @@ bool Controller::connectToCamera(int deviceNumber, int imageBufferSize, bool dro
     }
     else
     {
-        // Delete capture thread
         deleteCaptureThread();
-        // Delete image buffer
         deleteImageBuffer();
     }
-    // Return camera open result
     return isOpened;
-} // connectToCamera()
+}
 
 void Controller::disconnectCamera()
 {

@@ -109,37 +109,20 @@ void MainWindow::connectToCamera()
 				cameraConnectDialog->getCaptureThreadPrio(),
 				cameraConnectDialog->getProcessingThreadPrio())))
 			{
-				//// Create connection between frameLabel (emitter) and GUI thread (receiver/listener)
-				
-				connect(ui->frameLabel, SIGNAL(newMouseData(struct MouseData)), this, SLOT(newMouseData(struct MouseData)));
-				//// Create connection between processing thread (emitter) and GUI thread (receiver/listener)
-				connect(controller->processingThread, SIGNAL(newFrame(QImage)), this, SLOT(updateFrame(QImage)));
-				//// Create connections (3) between GUI thread (emitter) and processing thread (receiver/listener)
 
-				//connect(this->imageProcessingSettingsDialog, SIGNAL(newImageProcessingSettings(struct ImageProcessingSettings)), controller->processingThread, SLOT(updateImageProcessingSettings(struct ImageProcessingSettings)));
-				//connect(this, SIGNAL(newImageProcessingFlags(struct ImageProcessingFlags)), controller->processingThread, SLOT(updateImageProcessingFlags(struct ImageProcessingFlags)));
+				connect(ui->frameLabel, SIGNAL(newMouseData(struct MouseData)), this, SLOT(newMouseData(struct MouseData)));
+				connect(controller->processingThread, SIGNAL(newFrame(QImage)), this, SLOT(updateFrame(QImage)));
 				connect(this, SIGNAL(newTaskData(struct TaskData)), controller->processingThread, SLOT(updateTaskData(struct TaskData)));
 
 				initializeTaskDataStructure();
-				//// Set data to defaults in processingThread
-
-				//emit newImageProcessingFlags(imageProcessingFlags);
 				emit newTaskData(taskData);
-				//imageProcessingSettingsDialog->updateStoredSettingsFromDialog();
-				//// Setup imageBufferBar in main window with minimum and maximum values
 				ui->imageBufferBar->setMinimum(0);
 				ui->imageBufferBar->setMaximum(imageBufferSize);
-				//// Enable/disable appropriate GUI items
 				ui->actionConnectCamera->setEnabled(false);
 				ui->actionDisconnectCamera->setEnabled(true);
-				//imageProcessingSettingsAction->setEnabled(true);
-				//imageProcessingMenu->setEnabled(true);
-				//// Enable "Clear Image Buffer" push button in main window
 				ui->clearImageBufferButton->setEnabled(true);
-				//// Get input stream properties
 				sourceWidth = controller->captureThread->getInputSourceWidth();
 				sourceHeight = controller->captureThread->getInputSourceHeight();
-				//// Set text in labels in main window
 				ui->videoSourceLabel->setText("USB_CAMERA");
 				ui->cameraResolutionLabel->setText(QString::number(sourceWidth) + QString("x") + QString::number(sourceHeight));
 			}
@@ -147,9 +130,7 @@ void MainWindow::connectToCamera()
 			else
 			{
 				QMessageBox::warning(this, "错误:", "无法连接视频源.");
-				//// Delete dialogs
 				delete cameraConnectDialog;
-				//delete imageProcessingSettingsDialog;
 			}
 		}
 		

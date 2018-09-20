@@ -63,6 +63,16 @@ int CameraConnectDialog::getDeviceNumber()
 	else return -1;
 }
 
+QString CameraConnectDialog::getVideoStreamAddress()
+{
+	QString videoAddress = videoStreamAddressLineEdit->text();
+	if (videoAddress.isEmpty())
+	{
+		return "";
+	}
+	else return videoAddress;
+}
+
 int CameraConnectDialog::getImageBufferSize()
 {
     // Set image buffer size to default if field is blank
