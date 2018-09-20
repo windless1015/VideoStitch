@@ -75,6 +75,7 @@ void CaptureThread::run()
         imageBuffer->addFrame(grabbedFrame);
         // Update statistics
         updateFPS(captureTime);
+		//Sleep(40); //需要根据帧率设置延时时间
     }
     qDebug() << "Stopping capture thread...";
 } // run()
