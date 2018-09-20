@@ -35,10 +35,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-
-}
 
 void MainWindow::initializeTaskDataStructure()
 {
@@ -65,32 +61,21 @@ void MainWindow::setInitialGUIState()
 	ui->roiLabel->setText("");
 	ui->mouseCursorPosLabel->setText("");
 	ui->clearImageBufferButton->setDisabled(true);
-
-
-} // setInitialGUIState()
+}
 
 void MainWindow::signalSlotsInit()
 {
-	connect(ui->actionConnectCamera, SIGNAL(triggered()), this, SLOT(connectToCamera()));
-	connect(ui->actionDisconnectCamera, SIGNAL(triggered()), this, SLOT(disconnectCamera()));
+	connect(ui->actionConnectCamera, SIGNAL(triggered()), this, SLOT(connectToVideoSource()));
+	connect(ui->actionDisconnectCamera, SIGNAL(triggered()), this, SLOT(disconnectVideoSource()));
 	connect(ui->actionEixt, SIGNAL(triggered()), this, SLOT(close()));
-	/*connect(grayscaleAction, SIGNAL(toggled(bool)), this, SLOT(setGrayscale(bool)));
-	connect(smoothAction, SIGNAL(toggled(bool)), this, SLOT(setSmooth(bool)));
-	connect(dilateAction, SIGNAL(toggled(bool)), this, SLOT(setDilate(bool)));
-	connect(erodeAction, SIGNAL(toggled(bool)), this, SLOT(setErode(bool)));
-	connect(flipAction, SIGNAL(toggled(bool)), this, SLOT(setFlip(bool)));
-	connect(cannyAction, SIGNAL(toggled(bool)), this, SLOT(setCanny(bool)));
-	connect(imageProcessingSettingsAction, SIGNAL(triggered()), this, SLOT(setImageProcessingSettings()));
-	connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
-	connect(clearImageBufferButton, SIGNAL(released()), this, SLOT(clearImageBuffer()));
-	*/
+	connect(ui->clearImageBufferButton, SIGNAL(released()), this, SLOT(clearImageBuffer()));
 	connect(ui->frameLabel, SIGNAL(onMouseMoveEvent()), this, SLOT(updateMouseCursorPosLabel()));
-} // signalSlotsInit()
+}
 
 
-void MainWindow::connectToCamera()
+void MainWindow::connectToVideoSource()
 {
-	// Create CameraConnectDialog instance
+	//创建视频连接对话框实例
 	cameraConnectDialog = new CameraConnectDialog(this);
 
 	if (cameraConnectDialog->exec() == 1)
@@ -109,35 +94,50 @@ void MainWindow::connectToCamera()
 				cameraConnectDialog->getCaptureThreadPrio(),
 				cameraConnectDialog->getProcessingThreadPrio())))
 			{
-
-				connect(ui->frameLabel, SIGNAL(newMouseData(struct MouseData)), this, SLOT(newMouseData(struct MouseData)));
-				connect(controller->processingThread, SIGNAL(newFrame(QImage)), this, SLOT(updateFrame(QImage)));
-				connect(this, SIGNAL(newTaskData(struct TaskData)), controller->processingThread, SLOT(updateTaskData(struct TaskData)));
-
-				initializeTaskDataStructure();
-				emit newTaskData(taskData);
-				ui->imageBufferBar->setMinimum(0);
-				ui->imageBufferBar->setMaximum(imageBufferSize);
-				ui->actionConnectCamera->setEnabled(false);
-				ui->actionDisconnectCamera->setEnabled(true);
-				ui->clearImageBufferButton->setEnabled(true);
-				sourceWidth = controller->captureThread->getInputSourceWidth();
-				sourceHeight = controller->captureThread->getInputSourceHeight();
 				ui->videoSourceLabel->setText("USB_CAMERA");
-				ui->cameraResolutionLabel->setText(QString::number(sourceWidth) + QString("x") + QString::number(sourceHeight));
 			}
-			// Display error dialog if camera connection is unsuccessful
-			else
+		
+		}
+		else if (deviceType == IP_CAMERA)
+		{
+		}
+		else if (deviceType == VIDEOSTREAM)
+		{
+			QString videoStreamAddress = cameraConnectDialog->getVideoStreamAddress();
+			if ((isCameraConnected = controller->connectToVideoStream(videoStreamAddress, imageBufferSize,
+				cameraConnectDialog->getDropFrameCheckBoxState(),
+				cameraConnectDialog->getCaptureThreadPrio(),
+				cameraConnectDialog->getProcessingThreadPrio())))
 			{
-				QMessageBox::warning(this, "错误:", "无法连接视频源.");
-				delete cameraConnectDialog;
+				ui->videoSourceLabel->setText("VIDEO_STREAM");
 			}
 		}
+		if (!isCameraConnected)
+		{
+			QMessageBox::warning(this, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("无法打开视频源."));
+			delete cameraConnectDialog;
+			return;
+		}
+
+		connect(ui->frameLabel, SIGNAL(newMouseData(struct MouseData)), this, SLOT(newMouseData(struct MouseData)));
+		connect(controller->processingThread, SIGNAL(newFrame(QImage)), this, SLOT(updateFrame(QImage)));
+		connect(this, SIGNAL(newTaskData(struct TaskData)), controller->processingThread, SLOT(updateTaskData(struct TaskData)));
+		initializeTaskDataStructure();
+		emit newTaskData(taskData);
+		ui->imageBufferBar->setMinimum(0);
+		ui->imageBufferBar->setMaximum(imageBufferSize);
+		ui->actionConnectCamera->setEnabled(false);
+		ui->actionDisconnectCamera->setEnabled(true);
+		ui->clearImageBufferButton->setEnabled(true);
+		sourceWidth = controller->captureThread->getInputSourceWidth();
+		sourceHeight = controller->captureThread->getInputSourceHeight();
+		ui->cameraResolutionLabel->setText(QString::number(sourceWidth) + QString("x") + QString::number(sourceHeight));
+
 		
 	}
 }
 
-void MainWindow::disconnectCamera()
+void MainWindow::disconnectVideoSource()
 {
 	// Check if camera is connected
 	if (controller->captureThread->isCameraConnected())
@@ -160,7 +160,7 @@ void MainWindow::disconnectCamera()
 	}
 	// Display error dialog
 	else
-		QMessageBox::warning(this, "错误:", "已经视频源已经断开.");
+		QMessageBox::warning(this, QString::fromLocal8Bit("错误"), QString::fromLocal8Bit("视频源已经断开."));
 }
 
 void MainWindow::clearImageBuffer()

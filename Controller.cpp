@@ -72,6 +72,35 @@ bool Controller::connectToCamera(int deviceNumber, int imageBufferSize, bool dro
     return isOpened;
 }
 
+bool Controller::connectToVideoStream(QString&videoStreamAddr, int imageBufferSize, bool dropFrame, int capThreadPrio, int procThreadPrio)
+{
+	// Local variables
+	bool isOpened = false;
+	// Store imageBufferSize in private member
+	this->imageBufferSize = imageBufferSize;
+	// Create image buffer with user-defined settings
+	imageBuffer = new ImageBuffer(imageBufferSize, dropFrame);
+	// Create capture thread
+	captureThread = new CaptureThread(imageBuffer);
+	// Attempt to connect to camera
+	if ((isOpened = captureThread->connectToCamera(videoStreamAddr)))
+	{
+		// Create processing thread
+		processingThread = new ProcessingThread(imageBuffer, captureThread->getInputSourceWidth(), captureThread->getInputSourceHeight());
+		// Start capturing frames from camera
+		captureThread->start((QThread::Priority)capThreadPrio);
+		// Start processing captured frames
+		processingThread->start((QThread::Priority)procThreadPrio);
+	}
+	else
+	{
+		deleteCaptureThread();
+		deleteImageBuffer();
+	}
+	return isOpened;
+}
+
+
 void Controller::disconnectCamera()
 {
 
@@ -85,7 +114,7 @@ void Controller::disconnectCamera()
     deleteProcessingThread();
 
     deleteImageBuffer();
-} // disconnectCamera()
+}
 
 void Controller::stopCaptureThread()
 {

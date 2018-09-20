@@ -40,15 +40,14 @@ private:
 
 
 private slots:
-	void connectToCamera();
-	void disconnectCamera();
+	void connectToVideoSource();
+	void disconnectVideoSource();
 	void clearImageBuffer();//清除img buffer
 	void updateFrame(const QImage &frame);
 	void newMouseData(struct MouseData);
 	void updateMouseCursorPosLabel(); //更新鼠标位置
 
 
-    void on_pushButton_clicked();
 
 signals:
 	void newTaskData(struct TaskData taskData);

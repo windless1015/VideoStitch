@@ -50,6 +50,7 @@ public:
     ProcessingThread *processingThread;
     CaptureThread *captureThread;
     bool connectToCamera(int,int,bool,int,int);
+	bool connectToVideoStream(QString&, int, bool, int, int);
     void disconnectCamera();
     void stopCaptureThread();
     void stopProcessingThread();
