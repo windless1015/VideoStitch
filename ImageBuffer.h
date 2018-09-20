@@ -40,6 +40,7 @@
 // OpenCV header files
 #include <opencv2/highgui.hpp>
 
+
 using namespace cv;
 
 class ImageBuffer
