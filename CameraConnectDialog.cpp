@@ -23,6 +23,10 @@ CameraConnectDialog::CameraConnectDialog(QWidget *parent) : QDialog(parent)
     setupComboBoxes();
     resetToDefaults();
     connect(resetToDefaultsPushButton,SIGNAL(released()),SLOT(resetToDefaults()));
+	//¶ÔÓÚ
+	connect(usbCameraRadioBtn, SIGNAL(clicked(bool)), SLOT(onClickUsbCameraRadioBtn()));
+	connect(ipCameraRadioBtn, SIGNAL(clicked(bool)), SLOT(onClickIpCameraRadioBtn()));
+	connect(readVideoSteamRadioBtn, SIGNAL(clicked(bool)), SLOT(onClickReadVideoStreamRadioBtn()));
 } 
 
 
@@ -119,6 +123,12 @@ void CameraConnectDialog::resetToDefaults()
 		
         deviceNumberEdit->clear();
     }
+	videoStreamAddressLineEdit->setDisabled(true);
+	lineEdit_ip_camera_address->setDisabled(true);
+	lineEdit_ip_camera_port->setDisabled(true);
+	lineEdit_ip_camera_user->setDisabled(true);
+	lineEdit_ip_camera_psw->setDisabled(true);
+
     // Image buffer size
     imageBufferSizeEdit->setText(QString::number(DEFAULT_IMAGE_BUFFER_SIZE));
     // Drop frames
@@ -158,3 +168,34 @@ void CameraConnectDialog::resetToDefaults()
     else if(DEFAULT_PROC_THREAD_PRIO==QThread::InheritPriority)
         processingPrioComboBox->setCurrentIndex(7);
 } // resetToDefaults()
+
+void CameraConnectDialog::onClickUsbCameraRadioBtn()
+{
+	deviceNumberEdit->setEnabled(true);
+	lineEdit_ip_camera_address->setDisabled(true);
+	lineEdit_ip_camera_port->setDisabled(true);
+	lineEdit_ip_camera_user->setDisabled(true);
+	lineEdit_ip_camera_psw->setDisabled(true);
+	videoStreamAddressLineEdit->setDisabled(true);
+}
+
+void CameraConnectDialog::onClickIpCameraRadioBtn()
+{
+	lineEdit_ip_camera_address->setEnabled(true);
+	lineEdit_ip_camera_port->setEnabled(true);
+	lineEdit_ip_camera_user->setEnabled(true);
+	lineEdit_ip_camera_psw->setEnabled(true);
+	deviceNumberEdit->setDisabled(true);
+	videoStreamAddressLineEdit->setDisabled(true);
+}
+
+void CameraConnectDialog::onClickReadVideoStreamRadioBtn()
+{
+	videoStreamAddressLineEdit->setEnabled(true);
+	deviceNumberEdit->setDisabled(true);
+	lineEdit_ip_camera_address->setDisabled(true);
+	lineEdit_ip_camera_port->setDisabled(true);
+	lineEdit_ip_camera_user->setDisabled(true);
+	lineEdit_ip_camera_psw->setDisabled(true);
+}
+

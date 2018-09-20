@@ -156,7 +156,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Image Buffer Status (% full):</string>
+            <string>图像缓冲区状态(%百分比)</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

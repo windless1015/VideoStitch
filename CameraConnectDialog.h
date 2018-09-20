@@ -51,6 +51,9 @@ public:
     int getProcessingThreadPrio();
 public slots:
     void resetToDefaults();
+	void onClickUsbCameraRadioBtn();
+	void onClickIpCameraRadioBtn();
+	void onClickReadVideoStreamRadioBtn();
 private:
     void setupComboBoxes();
 };
